@@ -160,7 +160,13 @@ def get_profiles(base_dir):
 LEGACY_SESSION_FILES = ['Current Session', 'Last Session', 'Current Tabs', 'Last Tabs']
 
 def normalise_path(p):
-    return p.replace('\\', os.sep).replace('/', os.sep)
+    p = p.strip().replace('/', os.sep).replace('\\', os.sep)
+    # Expand bare drive letters: "C" or "C:" → "C:\"
+    if len(p) == 1 and p.isalpha():
+        p = p.upper() + ':\\'
+    elif len(p) == 2 and p[0].isalpha() and p[1] == ':':
+        p = p.upper() + '\\'
+    return p
 
 def is_snss(path):
     try:
@@ -221,9 +227,9 @@ def find_all_profiles(root):
         found.append((default_path, user, 'Chrome/Default'))
         return found
 
-    # Scan Users/* subdirectories
+    # Scan Users/* subdirectories — check C:\Users before C:\ itself
     users_dir = None
-    for candidate in [root, os.path.join(root, 'Users')]:
+    for candidate in [os.path.join(root, 'Users'), root]:
         if os.path.isdir(candidate):
             users_dir = candidate
             break
@@ -233,7 +239,12 @@ def find_all_profiles(root):
             user_dirs = [
                 d for d in os.listdir(users_dir)
                 if os.path.isdir(os.path.join(users_dir, d))
-                and d.lower() not in ('all users', 'default', 'default user', 'public')
+                and d.lower() not in (
+                    'all users', 'default', 'default user', 'public',
+                    'windows', 'program files', 'program files (x86)',
+                    'programdata', 'system volume information', 'recovery',
+                    '$recycle.bin', 'perflogs'
+                )
             ]
         except PermissionError:
             user_dirs = []
