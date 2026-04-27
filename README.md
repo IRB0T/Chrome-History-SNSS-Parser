@@ -1,5 +1,5 @@
-# 🔍 Chrome-History-SNSS-Parser
-Windows Chrome forensic extractor — parses browser artefacts from live machines and forensic images into a single timestamped CSV.
+# 🔍 Chrome SNSS Parser - Windows Browser Forensic Extractor. #Chrome-History-SNSS-Parser
+Chrome SNSS parser and history extractor for Windows - parses Chrome session files, browsing history, cookies, downloads and browser artifacts from Live machines and forensic images into a timestamped CSV. DFIR/Brwoser forensic tool.
 
 ---
 
